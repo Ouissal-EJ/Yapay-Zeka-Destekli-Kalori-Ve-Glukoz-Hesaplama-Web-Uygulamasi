@@ -1,0 +1,73 @@
+.entry-forms {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.calorie-form, .glucose-form {
+    flex: 1;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.entries-container {
+    display: flex;
+    gap: 2rem;
+}
+
+.calorie-entries, .glucose-entries {
+    flex: 1;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.entry {
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+input, select, button {
+    padding: 0.5rem;
+    margin: 0.25rem 0;
+}
+
+.app-nav {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+.app-nav button {
+    margin-right: 1rem;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.app-nav button.active {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+}
+
+.calorie-counter {
+    text-align: center;
+    padding: 2rem;
+}
+
+.calorie-counter input[type="file"] {
+    margin: 1rem 0;
+}

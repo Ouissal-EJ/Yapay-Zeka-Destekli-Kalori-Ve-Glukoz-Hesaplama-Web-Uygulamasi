@@ -7,7 +7,7 @@ import sys
 load_dotenv()
 client = OpenAI()
 
-def get_calories_from_image(image_path):
+def get_calories_and_glucose_from_image(image_path):
     with open(image_path, "rb") as image:
         base64_image = base64.b64encode(image.read()).decode("utf-8")
 
@@ -17,17 +17,23 @@ def get_calories_from_image(image_path):
         messages=[
             {
                 "role": "system",
-                "content": """You are a dietitian. A user sends you an image of a meal and you tell them how many calories are in it. Use the following JSON format:
+                "content": """You are a dietitian. Analyze the meal image for calories and glucose impact. Use this JSON format:
 
 {
-    "reasoning": "reasoning for the total calories",
+    "reasoning": "reasoning for the calculations",
     "food_items": [
         {
             "name": "food item name",
-            "calories": "calories in the food item"
+            "calories": "calories in the food item",
+            "glucose_impact": "low/medium/high"
         }
     ],
-    "total": "total calories in the meal"
+    "total": "total calories in the meal",
+    "glucose_assessment": {
+        "impact_level": "low/medium/high",
+        "explanation": "explanation of glucose impact",
+        "estimated_glucose_rise": "estimated glucose rise in mg/dL"
+    }
 }"""
             },
             {
@@ -35,7 +41,7 @@ def get_calories_from_image(image_path):
                 "content": [
                     {
                         "type": "text",
-                        "text": "How many calories is in this meal?"
+                        "text": "Analyze this meal for calories and glucose impact"
                     },
                     {
                         "type": "image_url",
@@ -49,11 +55,9 @@ def get_calories_from_image(image_path):
     )
 
     response_message = response.choices[0].message
-    content = response_message.content
-
-    return json.loads(content)
+    return json.loads(response_message.content)
 
 if __name__ == "__main__":
     image_path = sys.argv[1]
-    calories = get_calories_from_image(image_path)
-    print(json.dumps(calories, indent=4))
+    result = get_calories_and_glucose_from_image(image_path)
+    print(json.dumps(result, indent=4))

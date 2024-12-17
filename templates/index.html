@@ -1,19 +1,264 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calorie Counter</title>
-    <link rel="stylesheet" href="/static/css/style.css" />
+    <title>Smart Meal Analyzer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        #uploadForm {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+
+        #uploadForm:hover {
+            transform: translateY(-5px);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-upload-label {
+            background: #3498db;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            display: inline-block;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-label:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        button {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #27ae60;
+            transform: scale(1.05);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .results-grid.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #eee;
+        }
+
+        .food-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .impact-high {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .impact-medium {
+            color: #f39c12;
+            font-weight: 600;
+        }
+
+        .impact-low {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        .glucose-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-box {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-box h4 {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-box p {
+            color: #2c3e50;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .selected-file-name {
+            margin-top: 1rem;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
-        <h2>Calorie Counter</h2>
-        <p>Upload a meal image to calculate its calories</p>
-        <button id="upload"><img src="/static/images/camera.png" /></button>
-        <div id="calorie-count"></div>
-        <div id="spinner"></div>
+        <h1>Smart Meal Analyzer</h1>
+        
+        <form id="uploadForm">
+            <label class="file-upload-label">
+                Choose Image
+                <input type="file" name="image" accept="image/*" required>
+            </label>
+            <button type="submit">Analyze Meal</button>
+            <div class="selected-file-name"></div>
+        </form>
+
+        <div id="results" class="results-grid">
+            <div class="card">
+                <h2>📊 Calorie Analysis</h2>
+                <div id="foodItems"></div>
+                <div class="stat-box">
+                    <h4>Total Calories</h4>
+                    <p id="totalCalories">-</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🌡️ Glucose Impact</h2>
+                <div class="glucose-stats">
+                    <div class="stat-box">
+                        <h4>Impact Level</h4>
+                        <p id="glucoseImpact">-</p>
+                    </div>
+                    <div class="stat-box">
+                        <h4>Expected Rise</h4>
+                        <p id="glucoseRise">-</p>
+                    </div>
+                </div>
+                <p id="glucoseExplanation" style="margin-top: 1rem; color: #666;"></p>
+            </div>
+        </div>
     </div>
-    <script src="/static/js/script.js"></script>
+
+    <script>
+        document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+            const fileName = e.target.files[0]?.name || 'No file selected';
+            document.querySelector('.selected-file-name').textContent = fileName;
+        });
+
+        document.getElementById('uploadForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                
+                // Show results with animation
+                const results = document.getElementById('results');
+                results.style.display = 'grid';
+                results.classList.add('visible');
+                
+                // Update calorie information
+                document.getElementById('totalCalories').textContent = data.total;
+                
+                // Update food items
+                const foodItemsHtml = data.food_items.map(item => `
+                    <div class="food-item">
+                        <span>${item.name}</span>
+                        <span>
+                            ${item.calories} cal
+                            <span class="impact-${item.glucose_impact.toLowerCase()}">
+                                ● ${item.glucose_impact}
+                            </span>
+                        </span>
+                    </div>
+                `).join('');
+                document.getElementById('foodItems').innerHTML = foodItemsHtml;
+                
+                // Update glucose information
+                document.getElementById('glucoseImpact').textContent = data.glucose_assessment.impact_level;
+                document.getElementById('glucoseRise').textContent = data.glucose_assessment.estimated_glucose_rise;
+                document.getElementById('glucoseExplanation').textContent = data.glucose_assessment.explanation;
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error analyzing the image');
+            }
+        };
+    </script>
 </body>
 </html>

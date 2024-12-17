@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 import tempfile
 
-from calorie_counter import get_calories_from_image
+from calorie_counter import get_calories_and_glucose_from_image  # Updated import
 
 app = Flask(__name__)
 
@@ -21,12 +21,10 @@ def upload():
     temp_file = tempfile.NamedTemporaryFile()
     image.save(temp_file.name)
 
-    calories = get_calories_from_image(temp_file.name)
+    analysis = get_calories_and_glucose_from_image(temp_file.name)  # Updated function call
     temp_file.close()
 
-    return {
-        "calories": calories,
-    }
+    return analysis
 
 if __name__ == "__main__":
     app.run(debug=True)
