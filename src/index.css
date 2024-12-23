@@ -71,3 +71,26 @@ input, select, button {
 .calorie-counter input[type="file"] {
     margin: 1rem 0;
 }
+
+.advice {
+    font-size: 0.9em;
+    color: #666;
+    margin-top: 0.5rem;
+    padding: 0.5rem;
+    background-color: #f8f9fa;
+    border-left: 3px solid #007bff;
+    white-space: pre-line;
+}
+
+.advice-section {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+}
+
+.health-advice {
+    color: #666;
+    white-space: pre-line;
+    margin-top: 0.5rem;
+}

@@ -3,6 +3,7 @@ import { Entry } from './models/Entry';
 import { GlucoseEntry } from './models/GlucoseEntry';
 import { EntryForm } from './components/EntryForm';
 import { StorageService } from './services/StorageService';
+import { HealthAdviceService } from './services/HealthAdviceService';
 
 export const App: React.FC = () => {
     const [activeView, setActiveView] = useState<'calories' | 'health'>('calories');
@@ -83,7 +84,12 @@ export const App: React.FC = () => {
                         onChange={handleImageUpload}
                     />
                     {imageUrl && <img src={imageUrl} alt="Uploaded meal" style={{ maxWidth: '300px' }} />}
-                    {calories && <p>Estimated calories: {calories}</p>}
+                    {calories && (
+                        <div className="advice-section">
+                            <p>Estimated calories: {calories}</p>
+                            <p className="health-advice">{HealthAdviceService.getCalorieAdvice(calories)}</p>
+                        </div>
+                    )}
                 </div>
             ) : (
                 <div className="health-tracker">
@@ -94,8 +100,13 @@ export const App: React.FC = () => {
                             <h3>Calorie Entries</h3>
                             {entries.map((entry, index) => (
                                 <div key={index} className="entry">
-                                    <span>{entry.description}: {entry.calories} calories</span>
-                                    <span>({new Date(entry.timestamp).toLocaleString()})</span>
+                                    <div>
+                                        <span>{entry.description}: {entry.calories} calories</span>
+                                        <span>({new Date(entry.timestamp).toLocaleString()})</span>
+                                        <div className="advice">
+                                            {HealthAdviceService.getCalorieAdvice(entry.calories)}
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -104,8 +115,13 @@ export const App: React.FC = () => {
                             <h3>Glucose Entries</h3>
                             {glucoseEntries.map((entry, index) => (
                                 <div key={index} className="entry">
-                                    <span>{entry.value} mg/dL - {entry.mealType} meal</span>
-                                    <span>({new Date(entry.timestamp).toLocaleString()})</span>
+                                    <div>
+                                        <span>{entry.value} mg/dL - {entry.mealType} meal</span>
+                                        <span>({new Date(entry.timestamp).toLocaleString()})</span>
+                                        <div className="advice">
+                                            {HealthAdviceService.getGlucoseAdvice(entry.value, entry.mealType)}
+                                        </div>
+                                    </div>
                                 </div>
                             ))}
                         </div>
