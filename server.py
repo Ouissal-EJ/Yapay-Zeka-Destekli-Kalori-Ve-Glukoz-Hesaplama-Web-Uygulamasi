@@ -34,7 +34,8 @@ def upload():
     image.save(temp_file.name)
 
     try:
-        analysis = get_calories_and_glucose_from_image(temp_file.name)
+        # Pass the language to get response in the selected language
+        analysis = get_calories_and_glucose_from_image(temp_file.name, language)
         total_calories = int(analysis['total'])
         analysis['health_advice'] = get_health_advice(total_calories, language)
         return jsonify(analysis)
