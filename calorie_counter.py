@@ -13,7 +13,15 @@ def get_calories_and_glucose_from_image(image_path, language='en'):
 
     # Language-specific system prompts
     system_prompts = {
-        'en': """You are a dietitian. Analyze the meal image for calories, glucose impact, and provide personalized health advice. Use this JSON format:
+        'en': """You are a dietitian. Analyze the meal image for calories, glucose impact, and provide personalized health advice. 
+Use these specific calorie ranges for categorization:
+- Very High: > 1000 calories
+- High: 801-1000 calories
+- Medium: 501-800 calories
+- Low: 301-500 calories
+- Very Low: ≤ 300 calories
+
+Use this JSON format:
 {
     "reasoning": "reasoning for the calculations",
     "food_items": [
