@@ -13,7 +13,7 @@ def get_calories_and_glucose_from_image(image_path, language='en'):
 
     # Language-specific system prompts
     system_prompts = {
-        'en': """You are a dietitian. Analyze the meal image for calories and glucose impact. Use this JSON format:
+        'en': """You are a dietitian. Analyze the meal image for calories, glucose impact, and provide personalized health advice. Use this JSON format:
 {
     "reasoning": "reasoning for the calculations",
     "food_items": [
@@ -28,9 +28,10 @@ def get_calories_and_glucose_from_image(image_path, language='en'):
         "impact_level": "low/medium/high",
         "explanation": "explanation of glucose impact",
         "estimated_glucose_rise": "estimated glucose rise in mg/dL"
-    }
+    },
+    "health_advice": "detailed, personalized health advice based on the meal content, including specific recommendations for portion control, alternative ingredients, exercise suggestions, and timing of the meal"
 }""",
-        'fr': """Vous êtes diététicien. Analysez l'image du repas pour les calories et l'impact sur le glucose. Utilisez ce format JSON:
+        'fr': """Vous êtes diététicien. Analysez l'image du repas pour les calories, l'impact sur le glucose et fournissez des conseils santé personnalisés. Utilisez ce format JSON:
 {
     "reasoning": "raisonnement pour les calculs",
     "food_items": [
@@ -45,9 +46,10 @@ def get_calories_and_glucose_from_image(image_path, language='en'):
         "impact_level": "faible/moyen/élevé",
         "explanation": "explication de l'impact sur le glucose",
         "estimated_glucose_rise": "augmentation estimée du glucose en mg/dL"
-    }
+    },
+    "health_advice": "conseils santé détaillés et personnalisés basés sur le contenu du repas, incluant des recommandations spécifiques pour le contrôle des portions, les ingrédients alternatifs, les suggestions d'exercice et le moment du repas"
 }""",
-        'tr': """Bir diyetisyensiniz. Yemek görüntüsünü kalori ve glukoz etkisi için analiz edin. Bu JSON formatını kullanın:
+        'tr': """Bir diyetisyensiniz. Yemek görüntüsünü kalori, glukoz etkisi için analiz edin ve kişiselleştirilmiş sağlık önerileri sunun. Bu JSON formatını kullanın:
 {
     "reasoning": "hesaplamalar için gerekçelendirme",
     "food_items": [
@@ -62,15 +64,16 @@ def get_calories_and_glucose_from_image(image_path, language='en'):
         "impact_level": "düşük/orta/yüksek",
         "explanation": "glukoz etkisinin açıklaması",
         "estimated_glucose_rise": "tahmini glukoz yükselişi mg/dL"
-    }
+    },
+    "health_advice": "yemek içeriğine dayalı ayrıntılı, kişiselleştirilmiş sağlık önerileri, porsiyon kontrolü, alternatif malzemeler, egzersiz önerileri ve öğün zamanlaması için özel tavsiyeler içerir"
 }"""
     }
 
     # User prompts in different languages
     user_prompts = {
-        'en': "Analyze this meal for calories and glucose impact",
-        'fr': "Analysez ce repas pour les calories et l'impact sur le glucose",
-        'tr': "Bu yemeği kalori ve glukoz etkisi için analiz edin"
+        'en': "Analyze this meal for calories, glucose impact, and provide personalized health advice",
+        'fr': "Analysez ce repas pour les calories, l'impact sur le glucose et donnez des conseils santé personnalisés",
+        'tr': "Bu yemeği kalori, glukoz etkisi için analiz edin ve kişiselleştirilmiş sağlık önerileri verin"
     }
 
     # Use default English if language not supported
@@ -105,9 +108,3 @@ def get_calories_and_glucose_from_image(image_path, language='en'):
 
     response_message = response.choices[0].message
     return json.loads(response_message.content)
-
-if __name__ == "__main__":
-    image_path = sys.argv[1]
-    language = sys.argv[2] if len(sys.argv) > 2 else 'en'
-    result = get_calories_and_glucose_from_image(image_path, language)
-    print(json.dumps(result, indent=4))

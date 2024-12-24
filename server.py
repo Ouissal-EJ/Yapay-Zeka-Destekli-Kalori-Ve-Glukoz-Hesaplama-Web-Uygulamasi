@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 import tempfile
 from calorie_counter import get_calories_and_glucose_from_image
-from health_advisor import get_health_advice
 from translations import TRANSLATIONS
 
 app = Flask(__name__)
@@ -34,10 +33,8 @@ def upload():
     image.save(temp_file.name)
 
     try:
-        # Pass the language to get response in the selected language
+        # Get analysis with dynamic health advice from GPT-4
         analysis = get_calories_and_glucose_from_image(temp_file.name, language)
-        total_calories = int(analysis['total'])
-        analysis['health_advice'] = get_health_advice(total_calories, language)
         return jsonify(analysis)
     except Exception as e:
         return {"error": str(e)}, 500
